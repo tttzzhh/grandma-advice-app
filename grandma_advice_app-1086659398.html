@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奶奶今天给你的10条建议</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+                'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .emoji {
+            font-size: 48px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #f5576c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .advices-list {
+            list-style: none;
+        }
+
+        .advice-item {
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #f5576c;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            animation: fadeIn 0.5s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .advice-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .advice-number {
+            color: #f5576c;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .button-container {
+            text-align: center;
+            padding: 20px 30px 30px;
+        }
+
+        .get-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .get-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .get-button:active {
+            transform: translateY(0);
+        }
+
+        .get-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="emoji">👵</div>
+            <h1>奶奶今天给你的10条建议</h1>
+            <p>来自姜思达的胡说八道 · 随机抽取</p>
+        </div>
+
+        <div class="content">
+            <!-- 初始状态 -->
+            <div id="initial-state">
+                <div class="button-container">
+                    <button class="get-button" onclick="getAdvices()">获取建议</button>
+                </div>
+            </div>
+
+            <!-- 加载状态 -->
+            <div id="loading-state" class="loading hidden">
+                <div class="loading-spinner"></div>
+                <p>奶奶正在思考...</p>
+            </div>
+
+            <!-- 结果状态 -->
+            <div id="result-state" class="hidden">
+                <ul class="advices-list" id="advices-list"></ul>
+                <div class="footer">
+                    <p class="footer-note">本建议不负责后果，请谨慎采纳</p>
+                </div>
+                <div class="button-container">
+                    <button class="get-button" onclick="getAdvices()">再来一次</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 姜思达建议语料库（部分示例）
+        const advicesDatabase = [
+            "快乐的本身不是快乐，快乐的持续才是快乐",
+            "你越想快乐，越悲伤",
+            "平静中自见灵魂汹涌",
+            "别人的美你总能习惯，自己的美千金难换",
+            "如果你是一朵花，吸引的是蝴蝶和蜜蜂，但如果你是一坨屎，你能吸引来的只是苍蝇",
+            "我喜欢酒，是因为酒让平日怯懦的人勇敢",
+            "女性不应该因为她选择任何事情，而被贴上浪费的标签",
+            "我知道你们想要什么，可是我不想呢",
+            "你应该多去看看那些还有着希望的脸长成什么样，多在别人的脸上找到希望，真的会养到自己",
+            "聚众诉苦不是一个有出路的方式",
+            "人一想通，啥救都没有，就是会自在",
+            "我喜欢在情感上或者在人生上有一定程度破碎的人",
+            "人要不就别做选择，一旦做了选择，就别问对错",
+            "我不是这个社会的对抗者，我也是这个时代的产物",
+            "当我忍不住要去找前任的时候，长点心！要点脸！",
+            "你可以一天整成一个范冰冰，但你不能一天读成一个林徽因",
+            "对自己宽容一点，毕竟你已经很辛苦了",
+            "有时候别太顺从，有点起伏，才有意思",
+            "别陷在枯燥里，要活得滋润一点",
+            "诚实让你心灵安稳，努力让你有变化，因此有希望",
+            "应该把过度反思的时间用来过度创造上",
+            "我们花了很长时间去纠正自己的表达，但没有花足够的时间去表达",
+            "我现在打算放弃对自己的过度审视，我觉得想咋咋爱咋咋",
+            "如果只能有一种时代精神，那便是前行",
+            "前行，是为了抵抗时间的力量，抵抗命运的力量，又或者，前行，什么也不为",
+            "你们不要跟我讲道理，我又不是讲道理的人",
+            "你们想让我做个goodboy，而我只想做个badgirl",
+            "当你在赞叹某个人的时候，你就是在忽视一些人了",
+            "我们常常不够爱自己，我们常常透过爱我们的人才能发现我们自己有多么好",
+            "保持联系，这档事情最大的危害是：我们难以时刻和自己保持联系",
+            "朋友非常有分寸，你们才能称为朋友",
+            "恋人如果两个都愿意和对方时刻保持联系，顶多能证明你们以暴制暴",
+            "我们可以向他们证明，我们不是妖怪",
+            "看懂一个人，才能决定love or hate",
+            "灵魂是藏在内心深处的，灵魂看不见，甚至有很多人怀疑，真的有灵魂存在吗？",
+            "如果我们看待自我注定有偏差，那么我们一定要高看自己",
+            "幽默比正直更为难得，一屋子正直又无趣的人，想想就令人窒息",
+            "人要是没有欲望，就完蛋了",
+            "意义很多时候都是回溯的，你不能总结当下，它慢慢有一天自己来找你，就像小狗的尾巴",
+            "我们时刻保持联系最大的危害是：我们难以时刻和自己保持联系",
+            "我们讨论的对象是父母、爱人、领导，为什么不谈朋友？因为朋友从来不会随随便便要和你时刻保持联系",
+            "我们执着地去为了生如夏花而拼搏，甚至有的时候，没想着拼不拼搏，这花就开了",
+            "黑暗与寂静相伴，便是地狱",
+            "夜色不美，星星从未像画中那样呈现五个尖角",
+            "和你相处后我退化成儿童，我放弃独立饮食独立逛街独立睡眠的能力",
+            "我从独立的树变成树上的虫，我要吃，要哭，要大放厥词要无理取闹",
+            "对彼此的怨言似乎是爱情唯一的果实",
+            "随着新鲜感的丧失，制造新鲜感变成了应该忽略的尴尬之事",
+            "从妖童媛女的荡舟心许，迅速变成老夫老妻的旧船搁浅岸边",
+            "爱情仿佛从拥有时，就开始流失",
+            "我不想用错误的道路去验证道路的错误",
+            "恰恰是因为我们最后都要go die，所以我们真的没有时间珍惜每个人，我们只能找到珍惜的那个人",
+            "曾经经历的快乐，当分手的那一刻开始，全是负担",
+            "所以我无比祝福身边朋友的恋爱，我希望，那个滑坡，越远越好",
+            "这样的你们，久一点，再久一点；也不要陷得太深，让恐慌成为爱情运转的伴星",
+            "这可能么？我还不知道",
+            "我只知道，我可能更需要把心思放在能把握的地方——比如提高生活质量、结交更多有趣的人",
+            "毕竟我们能够控制的东西，太有限了",
+            "你，死于试图和世界对话",
+            "我们说，歧视是什么？歧视不单单是永远对你恶语相向，歧视也往往是在划分你我，所谓异己",
+            "我不是时代的逆子，我反而是时代的产物",
+            "现实主义始终是锻造浪漫的不二之选",
+            "少女在长大，少女未曾变老",
+            "女性不应该因为她选择任何事情，而被贴上浪费的标签",
+            "歧视不单单是永远对你恶语相向，歧视也往往是在划分你我",
+            "我的理想早就破碎了",
+            "我收获了多少无缘无故的恨，我就同比例收获很多无缘无故的爱",
+            "我可以选择不做，不做是我的权利",
+            "没有人有义务了解你",
+            "这个世界总有一天会不欢迎我",
+            "我内心最大的真相就是无话可说",
+            "理想破碎之后，我真的自由了",
+            "不能接受是一个没办法过得很fancy的人",
+            "如果你活一生，没有体验过飘的那一刻，太不爽",
+            "这个世界缺动人的故事而不缺道理",
+            "珍惜冲动，人生好坏不如爽",
+            "你们人生怎么就这么缺意义呢",
+            "三庭五眼指的是哪五眼：左眼右眼喉咙眼肚脐眼和比较偏下的一个眼…也就是鸡眼",
+            "好端端的同学就同学你老管人男同学叫爸爸干嘛你就这么缺爹",
+            "做了美黑只有黑黑的皮才能配上黑黑的心",
+            "语言是一枚烟雾弹",
+            "我做的所有事情都要吓到别人",
+            "人要是没有欲望，就完蛋了",
+            "意义很多时候都是回溯的，你不能总结当下",
+            "你往上跑，它意义跟着你的",
+            "我想做温柔、不必强大",
+            "自恋是对别人伤害最小的心理活动",
+            "有些人会在管住嘴和迈开腿之间，选择定义美",
+            "上一次令对方印象深刻的恶心穿搭是：每一次",
+            "上一次说谎是什么时候？刚才",
+            "你害怕衰老吗？有人不怕？",
+            "十年后别太像我妈就行",
+            "我就问一句，待会我们能去吃汉堡肉吗？",
+            "像小鸟一样，把新朋友一个个叼回来",
+            "选择投身文化行业，创作本身就是回报",
+            "当自由主义成为生活方式，它应该是温和的",
+            "改造自己的偏见与盲点，这是一生的功课",
+            "想让每个人更温柔，能意识到他人的存在",
+            "认识到自己的脆弱，会诞生共情还是怨恨",
+            "消费Less or More，其实都源于匮乏",
+            "对个性的追求反而迫使我们成为他人",
+            "消费主义与被建构的幸福密不可分",
+            "灵魂发问找自己，谁的自我不迷茫",
+            "幸福是乌托邦，不幸才是养料",
+            "风险厌恶者决定过一种冒险人生",
+            "表达并非天赋，是对确定性的抵抗",
+            "被deadline掌控的生活，好难松弛",
+            "不存在始终笔直的轨道，也没有完全自由的旷野",
+            "千人千面，大多数人如何其实是个伪命题",
+            "重建价值排序，先排序",
+            "性感不是追求极限，它朦胧难测，又真实可触",
+            "自我的坐标系，可不能交给别人拟定呀",
+            "相信个体生命的丰富，他人的狭隘标注，我不在乎",
+            "我活着就好",
+            "幽默比正直更为难得",
+            "一屋子正直又无趣的人，想想就令人窒息",
+            "如果你看待自我注定有偏差，那么我们一定要高看自己",
+            "我预习过胜利，预习过死亡，我唯独没有预习过平淡的人生",
+            "这个世界上不只有我们眼前的死气沉沉",
+            "你应该多去看看那些还有着希望的脸长成什么样，多在别人的脸上找到希望，真的会养到自己",
+            "聚众诉苦不是一个有出路的方式",
+            "人一想通，啥救都没有，就是会自在",
+            "我喜欢在情感上或者在人生上有一定程度破碎的人",
+            "我不是这个社会的对抗者，我也是这个时代的产物",
+            "你，死于试图和世界对话",
+            "我不希望他来找我借钱，难以启齿，我也不希望我找他还要钱的时候需要小心翼翼，这才是好朋友的相处之道",
+            "如果你活一生，没有体验过飘的那一刻，太不爽",
+            "你可以很强，虽然你不强也没关系",
+            "他们因为你，你可以很强，虽然你不强也没关系",
+            "最想要的粉丝期待是？我活着就好",
+            "自我的坐标系，可不能交给别人拟定呀",
+            "相信个体生命的丰富，他人的狭隘标注，我不在乎",
+            "我活着就好",
+            "人要不去飘一下，你总是不知道自己有可能飞到哪儿去",
+            "未免也是遗憾的",
+            "很多人会觉得安于沉寂是一个人生命扎根的过程，浮躁的人太多了，大家都飘着",
+            "而我觉得，如果不去飘一下，你总是不知道自己有可能飞到哪儿去",
+            "未免也是遗憾的",
+            "每时每刻，我都在想很疯狂的事",
+            "我要在流变中，笔挺地活着",
+            "我只听我自己的",
+            "语言是一枚烟雾弹",
+            "我做的所有事情都要吓到别人",
+            "每时每刻，我都在想很疯狂的事",
+            "我要决定我一会儿去当一个什么样的人",
+            "闪闪发光地享受这个舞台",
+            "不要抢接一个捧着鲜花的人",
+            "月亮上有人向我射箭",
+            "你们不要要求我在播客上面一定要听什么道理和意义，你们人生怎么就这么缺意义呢",
+            "哪个同学想错了整个一个道德沦丧",
+            "你们不要要求我在播客上面一定要听什么道理和意义，你们人生怎么就这么缺意义呢",
+            "对啊，有些事情不需要有意义，开心快乐就好，随时陪伴就好",
+            "人想不开了就是想不开了，想开了其实也就那么回事",
+            "你们不要跟我讲道理，我又不是讲道理的人",
+            "你们想让我做个goodboy，而我只想做个badgirl",
+            "我知道你们想要什么，可是我不想呢",
+            "好端端的同学就同学你老管人男同学叫爸爸干嘛你就这么缺爹",
+            "别没事就叫人爸爸，反过来让人叫女王大人，咱们早就推翻封建了，没有女王",
+            "咱们就是男同学女同学好同学好同志",
+            "同仇敌忾凯旋故里礼尚往来来…来总夹的好",
+            "一家人在一起的时候，夜色可以很美",
+            "生命的有限，会让我们感受到太多遗憾",
+            "恰恰是因为我们最后都要go die，所以我们真的没有时间珍惜每个人，我们只能找到珍惜的那个人",
+            "曾经经历的快乐，当分手的那一刻开始，全是负担",
+            "你越想快乐，越悲伤。因为快乐本身不是快乐，快乐的持续才是快乐",
+            "为什么老天会给我们这样的结局，叫做我们分手过后，原来的快乐和悲伤全会变成悲伤，是因为它提醒我们，你的生命是有限的，你不能把这些悲伤寄托在一个注定会悲伤的人身上",
+            "短视频里那个咚一声后，熟悉的窒息笑声，配上无数个谈不上搞笑的画面，就是这个时代的精神控制，是一种集体催眠",
+            "它甚至不是罐头笑声，毕竟罐头笑声要制造出些许差别以给人真实",
+            "这笑声分明是对无数无聊生活的一种羞辱，莫名其妙来娱乐你时的一脸伟岸",
+            "你知道你生活是糟糕的，有了它可能会好点",
+            "但是你但凡活得更好一些，你都知道这个被滥用的笑声代表着一种粗鄙，躲都来不及",
+            "没有人有义务了解你",
+            "这个世界总有一天会不欢迎我",
+            "我内心最大的真相就是无话可说",
+            "我预习过胜利，预习过死亡，我唯独没有预习过平淡的人生",
+            "如果你想活一生，没有体验过飘的那一刻，太不爽",
+            "这个世界缺动人的故事而不缺道理",
+            "珍惜冲动，人生好坏不如爽"
+        ];
+
+        function getAdvices() {
+            // 显示加载状态
+            document.getElementById('initial-state').classList.add('hidden');
+            document.getElementById('result-state').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+
+            // 模拟加载延迟
+            setTimeout(() => {
+                // 随机选择10条不重复的建议
+                const shuffled = [...advicesDatabase].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, 10);
+
+                // 渲染建议列表
+                const listElement = document.getElementById('advices-list');
+                listElement.innerHTML = '';
+
+                selected.forEach((advice, index) => {
+                    // 确保每条不超过40字
+                    let truncatedAdvice = advice.length > 40 ? advice.substring(0, 40) + '...' : advice;
+
+                    const li = document.createElement('li');
+                    li.className = 'advice-item';
+                    li.style.animationDelay = `${index * 0.1}s`;
+                    li.innerHTML = `<span class="advice-number">${index + 1}.</span>${truncatedAdvice}`;
+                    listElement.appendChild(li);
+                });
+
+                // 显示结果状态
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('result-state').classList.remove('hidden');
+            }, 800);
+        }
+    </script>
+</body>
+</html>
